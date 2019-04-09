@@ -95,16 +95,19 @@ class SonarGroups(object):
             except requests.exceptions.RequestException as e:
                 logger.error(e)
                 sys.exit(1)
-            r_json = r.json()
-            for group in r_json['groups']:
-                group_name = group['name']
-                self.logger.debug("found Sonar group {}".format(group_name))
-                sonar_groups.append(group_name)
-            result_size = len(r_json['groups'])
-            if result_size < page_size:
-                break
-            # we blättere the page
-            page = page + 1
+            if r.status_code == 200:
+                r_json = r.json()
+                for group in r_json['groups']:
+                    group_name = group['name']
+                    self.logger.debug("found Sonar group {}".format(group_name))
+                    sonar_groups.append(group_name)
+                result_size = len(r_json['groups'])
+                if result_size < page_size:
+                    break
+                # we blättere the page
+                page = page + 1
+            else:
+                raise Exception("authentication to Sonar failed, got response code {}".format(r.status_code))
 
         self.logger.info("found a total of {} Sonar groups".format(len(sonar_groups)))
         return sonar_groups
