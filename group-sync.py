@@ -6,7 +6,7 @@ import yaml
 import logging
 import logging.config
 import sys
-from export_target.sonar import SonarGroups
+from sync_target.sonar import SonarGroups
 
 def filter_build(ldap_objectclass, ldap_filter_include):
     """ generate filter from yaml list """
@@ -98,8 +98,9 @@ if args.nodry:
     s.create_groups(sonar_groups_create)
 
 sonar_groups = s.get_groups()
+
 # delete inexistent LDAP groups in Sonar
 sonar_groups_delete = set(sonar_groups).difference(set(ldap_groups))
-logger.info("delete {} groups in Sonar".format(len(sonar_groups_create)))
+logger.info("delete {} groups in Sonar".format(len(sonar_groups_delete)))
 if args.nodry:
-    s.delete_groups(sonar_groups_delete)
+    s.delete_groups(list(sonar_groups_delete))

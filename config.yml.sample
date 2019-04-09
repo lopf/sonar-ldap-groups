@@ -20,12 +20,3 @@ sonar:
   keep_local_groups:
     - sonar-users
     - sonar-administrators
-  # Groups we compare the ldap search result against.
-  # If the group is returned in this search, but not in the LDAP results,
-  # it will be deleted from Sonarqube. These are the queries used for Sonar group search.
-  # Hint: use the same filters as for LDAPs
-  managed_group_search:
-    - admin
-    - group1
-    - group2
-    - project-group
