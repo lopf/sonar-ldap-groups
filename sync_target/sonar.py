@@ -83,11 +83,11 @@ class SonarGroups(object):
         """ get the full list of current sonar groups based on search """
 
         sonar_groups = []
-        page_size = 50
+        page_size = 100
         page = 1
         full_url = self.url + "/" + self.groups_search_path
         
-            # because of paging, we might have to send multiple requests
+        # because of paging, we might have to send multiple requests
         while True:
             query = 'q=&ps={}&p={}'.format(page_size, page)
             try:
@@ -100,14 +100,15 @@ class SonarGroups(object):
                 for group in r_json['groups']:
                     group_name = group['name']
                     self.logger.debug("found Sonar group {}".format(group_name))
-                    sonar_groups.append(group_name)
+                    if group_name not in self.keep_local_groups:
+                        sonar_groups.append(group_name)
                 result_size = len(r_json['groups'])
                 if result_size < page_size:
                     break
                 # we blättere the page
                 page = page + 1
             else:
-                raise Exception("authentication to Sonar failed, got response code {}".format(r.status_code))
+                raise Exception("authentication to Sonar failed, got response code {} on {}".format(r.status_code, full_url))
 
         self.logger.info("found a total of {} Sonar groups".format(len(sonar_groups)))
         return sonar_groups

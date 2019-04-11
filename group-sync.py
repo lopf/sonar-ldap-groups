@@ -82,7 +82,7 @@ logger = logging.getLogger(__name__)
 cfgfile = args.configfile
 with open(cfgfile, 'r') as configfile:
     logger.info("loading configuration file {}".format(cfgfile))
-    cfg = yaml.load(configfile)
+    cfg = yaml.safe_load(configfile)
 
 ldap_filter = filter_build(cfg['ldap']['objectclass'], cfg['ldap']['filter_include'])
 all_records = ldap_search(ldap_filter)

@@ -35,6 +35,18 @@ cp config.yml.sample config.yml
 
 You may want to put this into a cronjob to run regularly.
 
-Will provide Dockerfile soon...
+### Docker
+
+Build a container image:
+```
+docker build . -t sonar-ldap-groups
+```
+
+Run script in container and pass it a local configuration file:
+```
+docker run -it -v$(pwd)/config.yml:/etc/config.yml sonar-ldap-groups --config /etc/config.yml
+```
+
+### Kubernetes
 Will provide K8s resources soon...
 
