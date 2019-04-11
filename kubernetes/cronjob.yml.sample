@@ -1,0 +1,27 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: sonar-ldap-group
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: sonar-ldap-groups
+              image: lopf/sonar-ldap-groups
+              args:
+                - --config
+                - /app/etc/config.yml
+                - --log-config
+                - /app/etc/logging.yml
+                - --no-dry
+              volumeMounts:
+                - name: sonarsync-config-volume
+                  mountPath: /app/etc/
+          restartPolicy: Never
+          volumes:
+            - name: sonarsync-config-volume
+              configMap:
+                name: sonarsync-config

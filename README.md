@@ -48,5 +48,6 @@ docker run -it -v$(pwd)/config.yml:/etc/config.yml sonar-ldap-groups --config /e
 ```
 
 ### Kubernetes
-Will provide K8s resources soon...
+
+Checkout the _Cronjob_ and _ConfigMap_ examples in the `kubernetes/*` directory.
 
