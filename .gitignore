@@ -2,6 +2,8 @@
 config.yml
 
 .DS_Store
+.idea
+.scannerwork
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

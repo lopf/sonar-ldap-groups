@@ -1,10 +1,11 @@
-import requests
-import sys
-import json
 import logging
+import sys
+
+import requests
+
 
 class SonarGroups(object):
-    
+
     def __init__(self, cfg):
         self.groups_search_path = "api/user_groups/search"
         self.group_create_path = "api/user_groups/create"
@@ -21,7 +22,7 @@ class SonarGroups(object):
 
     def delete_groups(self, groups):
         """ delete groups based on a list """
-        
+
         for group in groups:
             if group not in self.keep_local_groups:
                 self.logger.debug("delete Sonar group {}".format(group))
@@ -47,7 +48,7 @@ class SonarGroups(object):
             self.logger.debug("Sonar group {} not found".format(name))
             pass
         else:
-            raise Exception("tried to delete group '{}' " + 
+            raise Exception("tried to delete group '{}' " +
                             "received status {} " +
                             "with error {}".format(name, r.status_code, r.text))
 
@@ -56,7 +57,7 @@ class SonarGroups(object):
         for group in groups:
             self.logger.debug("create Sonar group {}".format(group))
             self.__create_group(group)
-    
+
     def __create_group(self, name):
         """ create a group """
         full_url = self.url + "/" + self.group_create_path
@@ -66,7 +67,7 @@ class SonarGroups(object):
         except requests.exceptions.RequestException as e:
             logger.error(e)
             sys.exit(1)
-        
+
         if r.status_code == 200:
             self.logger.info("Sonar group {} created".format(name))
             pass
@@ -75,10 +76,10 @@ class SonarGroups(object):
             # what else to do if it exists
             pass
         else:
-            raise Exception("tried to create group '{}' " + 
+            raise Exception("tried to create group '{}' " +
                             "received status {} " +
                             "with error {}".format(name, r.status_code, r.text))
-    
+
     def get_groups(self):
         """ get the full list of current sonar groups based on search """
 
@@ -86,7 +87,7 @@ class SonarGroups(object):
         page_size = 100
         page = 1
         full_url = self.url + "/" + self.groups_search_path
-        
+
         # because of paging, we might have to send multiple requests
         while True:
             query = 'q=&ps={}&p={}'.format(page_size, page)
@@ -108,7 +109,8 @@ class SonarGroups(object):
                 # we blättere the page
                 page = page + 1
             else:
-                raise Exception("authentication to Sonar failed, got response code {} on {}".format(r.status_code, full_url))
+                raise Exception(
+                    "authentication to Sonar failed, got response code {} on {}".format(r.status_code, full_url))
 
         self.logger.info("found a total of {} Sonar groups".format(len(sonar_groups)))
         return sonar_groups

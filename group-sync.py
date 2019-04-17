@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
-from argparse import ArgumentParser
-from ldap3 import *
-import yaml
 import logging
 import logging.config
-import sys
+from argparse import ArgumentParser
+
+import yaml
+from ldap3 import *
+
 from sync_target.sonar import SonarGroups
+
 
 def filter_build(ldap_objectclass, ldap_filter_include):
     """ generate filter from yaml list """
@@ -16,6 +18,7 @@ def filter_build(ldap_objectclass, ldap_filter_include):
     ldap_filter = ldap_filter + "))"
     logger.info("LDAP filter: {}".format(ldap_filter))
     return ldap_filter
+
 
 def get_ldap_groups(all_groups):
     """ get LDAP groups as simple list """
@@ -27,27 +30,29 @@ def get_ldap_groups(all_groups):
             ldap_groups.append(ldap_record)
     return ldap_groups
 
+
 def ldap_search(ldap_filter):
     """ perform ldap search """
-    server = Server(cfg['ldap']['url'], get_info=ALL, port=cfg['ldap']['port'], use_ssl = cfg['ldap']['ssl'])
+    server = Server(cfg['ldap']['url'], get_info=ALL, port=cfg['ldap']['port'], use_ssl=cfg['ldap']['ssl'])
     # create a connection object, and bind with the DN and password
-    try: 
+    try:
         logger.info("connecting to LDAP server")
         conn = Connection(server, cfg['ldap']['binddn'], cfg['ldap']['bindpassword'], auto_bind=True)
         logger.info("connected to LDAP {}".format(cfg['ldap']['url']))
         # define search parameters
-        searchParameters = { 'search_base': cfg['ldap']['searchbase'],
-                      'search_filter': ldap_filter,
-                      'attributes': 'cn',
-                      'paged_size': 2000,
-                      'generator': False}
+        searchParameters = {'search_base': cfg['ldap']['searchbase'],
+                            'search_filter': ldap_filter,
+                            'attributes': 'cn',
+                            'paged_size': 2000,
+                            'generator': False}
         search_results = conn.extend.standard.paged_search(**searchParameters)
         logger.info("received {} entities".format(len(search_results)))
         return search_results
-        
+
     except core.exceptions.LDAPBindError as e:
         # If the LDAP bind failed for reasons such as authentication failure.
-        logging.error('LDAP bind failed: ', e) 
+        logging.error('LDAP bind failed: ', e)
+
 
 parser = ArgumentParser(
     description=""" Synchronize LDAP/AD groups with Sonar """
