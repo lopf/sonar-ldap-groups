@@ -10,7 +10,7 @@ class SonarGroups(object):
         self.groups_search_path = "api/user_groups/search"
         self.group_create_path = "api/user_groups/create"
         self.group_delete_path = "api/user_groups/delete"
-        self.url = cfg['sonar']['url']
+        self.url = cfg['sonar']['url'].rstrip('/')
         self.token = cfg['sonar']['token']
         self.keep_local_groups = cfg['sonar']['keep_local_groups']
         self.logger = logging.getLogger(__name__)
